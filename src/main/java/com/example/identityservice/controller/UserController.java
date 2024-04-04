@@ -7,12 +7,15 @@ import com.example.identityservice.dto.response.UserResponse;
 import com.example.identityservice.entity.User;
 import com.example.identityservice.service.UserService;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
+@Slf4j
 @RequestMapping("/users")
 public class UserController {
     @Autowired
@@ -33,6 +36,13 @@ public class UserController {
     //Giờ chúng ta không trả về Object nữa mà trả về UserResponse
     @GetMapping()
     List<User> getUser(){
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+        log.info("Username: {}", authentication.getName());
+        log.info("Roles: {}", authentication.getAuthorities());
+        authentication.getAuthorities().forEach(
+                grantedAuthority -> log.info(grantedAuthority.getAuthority())
+        );
+
         return userService.getUsers();
     }
 
